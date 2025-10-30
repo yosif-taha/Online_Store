@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Online_Store.Domain.Contracts;
 using Online_Store.Persistence;
 using Online_Store.Persistence.Data.Contexts;
+using Online_Store.Services;
+using Online_Store.Services.Abstractions;
 using Online_Store.Services.Mapping.Products;
 using System.Threading.Tasks;
 
@@ -29,6 +31,7 @@ namespace Online_Store.Web
 
             builder.Services.AddScoped<IDbInitializer,DbInitializer>();
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddScoped<IServicesManager,ServicesManager>();
             builder.Services.AddAutoMapper(M => M.AddProfile( new ProductProfile()));
 
             var app = builder.Build();

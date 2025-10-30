@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Online_Store.Domain.Contracts;
 using Online_Store.Domain.Entites;
+using Online_Store.Domain.Entites.Products;
 using Online_Store.Persistence.Data.Contexts;
 using System;
 using System.Collections.Generic;
@@ -12,18 +13,28 @@ namespace Online_Store.Persistence.Repositories
 {
     public class GenericRepository<TKey, TEntity>(OnlineStoreDbContext _context) : IGenericRepository<TKey, TEntity> where TEntity : BaseEntity<TKey>
     {
-       
+
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(bool changeTracker = false)
         {
+            if (typeof(TEntity) == typeof(Product))
+            {
+                return
+             changeTracker ? await _context.Products.Include(P => P.Brand).Include(P => P.Type).ToListAsync() as IEnumerable<TEntity>
+             : await _context.Products.Include(P => P.Brand).Include(P => P.Type).ToListAsync() as IEnumerable<TEntity>;
+            }
             return
-                changeTracker ? await _context.Set<TEntity>().ToListAsync()
-                : await _context.Set<TEntity>().AsNoTracking().ToListAsync();
+    changeTracker ? await _context.Set<TEntity>().ToListAsync()
+    : await _context.Set<TEntity>().AsNoTracking().ToListAsync();
         }
 
         public async Task<TEntity?> GetAsync(TKey key)
         {
-           return await _context.Set<TEntity>().FindAsync(key);
+            if (typeof(TEntity) == typeof(Product))
+            {
+                return await _context.Products.Include(P => P.Brand).Include(P => P.Type).FirstOrDefaultAsync(P => P.Id == key as int?) as TEntity;
+            }
+            return await _context.Set<TEntity>().FindAsync(key);
         }
 
         public async Task AddAsync(TEntity entity)
@@ -40,6 +51,6 @@ namespace Online_Store.Persistence.Repositories
         {
             _context.Remove(entity);
         }
-        
+
     }
 }

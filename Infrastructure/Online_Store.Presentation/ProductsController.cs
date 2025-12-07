@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Online_Store.Services.Abstractions;
+using Online_Store.Shared.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,9 @@ namespace Online_Store.Presentation
     {
 
         [HttpGet] //Get: baseUrl/api/Products
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParameters parameters)
         {
-            var result = await _servicesManager.ProductService.GetAllProductAsync();
+            var result = await _servicesManager.ProductService.GetAllProductAsync(parameters);
             if (result is null) return BadRequest(); //400
             return Ok(result); //200
         }

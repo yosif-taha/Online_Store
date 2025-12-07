@@ -1,4 +1,5 @@
-﻿using Online_Store.Shared.Dtos;
+﻿using Online_Store.Shared;
+using Online_Store.Shared.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Online_Store.Services.Abstractions.Product
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductResponse>> GetAllProductAsync();
+        Task<PaginationResponse<ProductResponse>> GetAllProductAsync(ProductQueryParameters parameters);
         Task<ProductResponse> GetProductByIdAsync(int id);
 
         Task<IEnumerable<BrandTypeResponse>> GetAllBrandtAsync();

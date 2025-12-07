@@ -2,6 +2,9 @@
 using Online_Store.Domain.Contracts;
 using Online_Store.Domain.Entites.Products;
 using Online_Store.Services.Abstractions.Product;
+using Online_Store.Services.Specifications;
+using Online_Store.Services.Specifications.Products;
+using Online_Store.Shared;
 using Online_Store.Shared.Dtos;
 using System;
 using System.Collections.Generic;
@@ -13,17 +16,31 @@ namespace Online_Store.Services.Product
 {
     public class ProductService(IUnitOfWork _unitOfWork , IMapper _mapper) : IProductService
     {
-        public async Task<IEnumerable<ProductResponse>> GetAllProductAsync()
+        public async Task<PaginationResponse<ProductResponse>> GetAllProductAsync(ProductQueryParameters parameters)
         {
 
-           var product = await _unitOfWork.GetRepository<int, Online_Store.Domain.Entites.Products.Product>().GetAllAsync();
+            var spec = new ProductsWithBrandAndTypeSpecifications(parameters);
+            
+           var product = await _unitOfWork.GetRepository<int, Online_Store.Domain.Entites.Products.Product>().GetAllAsync(spec);
            var result = _mapper.Map<IEnumerable<ProductResponse>>(product);
-            return result;
+
+
+
+            var specCount =new ProductsCountSpecifications(parameters);
+
+            var count = await _unitOfWork.GetRepository<int, Online_Store.Domain.Entites.Products.Product>().CountAsync(specCount);
+
+            return new PaginationResponse<ProductResponse>(parameters.PageIndex,parameters.PageSize, count, result);
         }
 
         public async Task<ProductResponse> GetProductByIdAsync(int id)
         {
-            var product = await _unitOfWork.GetRepository<int, Online_Store.Domain.Entites.Products.Product>().GetAsync(id);
+            var spec = new ProductsWithBrandAndTypeSpecifications(id);
+
+
+            var product = await _unitOfWork.GetRepository<int, Online_Store.Domain.Entites.Products.Product>().GetAsync(spec);
+         
+
             var result =  _mapper.Map<ProductResponse>(product);
             return result;
         }

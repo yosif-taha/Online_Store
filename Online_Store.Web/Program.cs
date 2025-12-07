@@ -6,6 +6,7 @@ using Online_Store.Persistence.Data.Contexts;
 using Online_Store.Services;
 using Online_Store.Services.Abstractions;
 using Online_Store.Services.Mapping.Products;
+using Online_Store.Web.Middlewares;
 using System.Threading.Tasks;
 
 namespace Online_Store.Web
@@ -32,7 +33,7 @@ namespace Online_Store.Web
             builder.Services.AddScoped<IDbInitializer,DbInitializer>();
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
             builder.Services.AddScoped<IServicesManager,ServicesManager>();
-            builder.Services.AddAutoMapper(M => M.AddProfile( new ProductProfile()));
+            builder.Services.AddAutoMapper(M => M.AddProfile( new ProductProfile(builder.Configuration)));
 
             var app = builder.Build();
 
@@ -44,6 +45,8 @@ namespace Online_Store.Web
             await dbinitializer.IntiliazeAsync();
             #endregion
 
+            app.UseMiddleware<ErrorHandleMaddleware>();
+            app.UseStaticFiles();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -53,6 +56,7 @@ namespace Online_Store.Web
             }
 
             app.UseHttpsRedirection();
+   
 
             app.UseAuthorization();
 

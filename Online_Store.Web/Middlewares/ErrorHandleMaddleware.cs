@@ -1,4 +1,5 @@
-﻿using Online_Store.Shared.ErrorModels;
+﻿using Online_Store.Domain.Exeptions.NotFound;
+using Online_Store.Shared.ErrorModels;
 
 namespace Online_Store.Web.Middlewares
 {
@@ -16,12 +17,26 @@ namespace Online_Store.Web.Middlewares
             try
             {
                 await _next.Invoke(context);
+                if(context.Response.StatusCode == 404)
+                {
+                    context.Response.ContentType = "application/json";
+                    var response = new ErrorDetales()
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        ErrorMessage = $"Endpoint {context.Request.Path} is not found"
+                    };
+                    await context.Response.WriteAsJsonAsync(response);
+                }
             }
             catch (Exception ex)
             {
                 //logic
 
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.StatusCode = ex switch
+                {
+                    NotFoundException => StatusCodes.Status404NotFound,
+                    _ => StatusCodes.Status500InternalServerError
+                };
 
                 context.Response.ContentType = "application/json";
 

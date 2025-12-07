@@ -27,7 +27,6 @@ namespace Online_Store.Presentation
         public async Task<IActionResult> GetProductsById(int? id)
         {
             var result = await _servicesManager.ProductService.GetProductByIdAsync(id.Value);
-            if (result is null) return NotFound(); //404
             return Ok(result); //200
         }
 

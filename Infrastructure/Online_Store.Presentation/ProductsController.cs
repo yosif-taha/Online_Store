@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Online_Store.Presentation.Attributes;
 using Online_Store.Services.Abstractions;
 using Online_Store.Shared.Dtos;
 using System;
@@ -11,6 +12,7 @@ namespace Online_Store.Presentation
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Cache(50)]
     public class ProductsController(IServicesManager _servicesManager) : ControllerBase
     {
 

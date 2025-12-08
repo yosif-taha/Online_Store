@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Online_Store.Domain.Contracts;
 using Online_Store.Persistence.Data.Contexts;
+using Online_Store.Persistence.Repositories;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,14 @@ namespace Online_Store.Persistence
             });
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IBasketReposatory, BasketRepository>();
+
+
+            //registration of redis connection
+            services.AddSingleton<IConnectionMultiplexer>((serverProvider) =>
+                 ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection"))
+            );
+
             return services;
         }
     }

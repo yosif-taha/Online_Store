@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Online_Store.Domain.Contracts;
 using Online_Store.Services.Abstractions;
+using Online_Store.Services.Abstractions.Baskets;
 using Online_Store.Services.Abstractions.Product;
+using Online_Store.Services.Baskets;
 using Online_Store.Services.Product;
 using System;
 using System.Collections.Generic;
@@ -11,8 +13,9 @@ using System.Threading.Tasks;
 
 namespace Online_Store.Services
 {
-    public class ServicesManager(IUnitOfWork _unitOfWork , IMapper _mapper) : IServicesManager
+    public class ServicesManager(IUnitOfWork _unitOfWork , IMapper _mapper , IBasketReposatory _basketReposatory) : IServicesManager
     {
         public IProductService ProductService { get; } = new ProductService(_unitOfWork, _mapper);
+        public IBasketServices BasketService { get; } = new BasketServices(_basketReposatory, _mapper);
     }
 }

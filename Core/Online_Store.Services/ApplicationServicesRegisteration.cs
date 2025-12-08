@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Online_Store.Services.Abstractions;
+using Online_Store.Services.Mapping.Baskets;
 using Online_Store.Services.Mapping.Products;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Online_Store.Services
         {
             services.AddScoped<IServicesManager, ServicesManager>();
             services.AddAutoMapper(M => M.AddProfile(new ProductProfile(configuration)));
+            services.AddAutoMapper(M => M.AddProfile(new BasketProfile()));
             return services;
         }
     }

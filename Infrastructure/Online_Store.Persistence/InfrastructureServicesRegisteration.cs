@@ -24,6 +24,7 @@ namespace Online_Store.Persistence
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBasketReposatory, BasketRepository>();
+            services.AddScoped<ICacheRepository, CacheRepository>();
 
 
             //registration of redis connection

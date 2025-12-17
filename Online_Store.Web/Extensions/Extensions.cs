@@ -1,9 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using Online_Store.Domain.Contracts;
+using Online_Store.Domain.Entites.Identity;
 using Online_Store.Persistence;
+using Online_Store.Persistence.Identity.Contexts;
 using Online_Store.Services;
+using Online_Store.Shared;
 using Online_Store.Shared.ErrorModels;
 using Online_Store.Web.Middlewares;
+using System.Text;
 
 namespace Online_Store.Web.Exctensions
 {
@@ -17,6 +25,12 @@ namespace Online_Store.Web.Exctensions
             services.ConfigureBehaviorOptions();
             services.AddInfrastructureServices(configuration);
             services.AddApplicationServices(configuration);
+            services.AddIdentityServices();
+            services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+            services.AddAuthonticationService(configuration);
+
+
+
             return services;
         }
 
@@ -28,6 +42,40 @@ namespace Online_Store.Web.Exctensions
             services.AddSwaggerGen();
             return services;
         }
+        private static IServiceCollection AddAuthonticationService(this IServiceCollection services , IConfiguration configuration)
+        {
+            var jwtOption = configuration.GetSection("JwtOptions").Get<JwtOptions>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "Bearer";
+                options.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtOption.issuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtOption.auduance,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOption.key))
+
+
+                };
+            });
+            return services;
+        }
+        private static IServiceCollection AddIdentityServices(this IServiceCollection services)
+        {
+            services.AddIdentityCore<AppUser>(options => 
+            { 
+             options.User.RequireUniqueEmail = true;
+            }).AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<IdentityStoreDbContext>();
+            return services;
+        }
 
         private static IServiceCollection ConfigureBehaviorOptions(this IServiceCollection services)
         {
@@ -36,7 +84,7 @@ namespace Online_Store.Web.Exctensions
                 config.InvalidModelStateResponseFactory = (actionContext) =>
                 {
                     var errors = actionContext.ModelState.Where(M => M.Value.Errors.Any()).
-                                                         Select(M => new ValidationError()
+                                                         Select(M => new Shared.ErrorModels.ValidationError()
                                                          {
                                                              Field = M.Key,
                                                              Errors = M.Value.Errors.Select(E => E.ErrorMessage)
@@ -72,7 +120,7 @@ namespace Online_Store.Web.Exctensions
 
             app.UseHttpsRedirection();
 
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
@@ -92,6 +140,7 @@ namespace Online_Store.Web.Exctensions
 
             var dbinitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>(); // Ask CLR to crate object from IDbInitializer
             await dbinitializer.IntiliazeAsync();
+            await dbinitializer.IntiliazeIdentityAsync();
             return app;
         }
     }

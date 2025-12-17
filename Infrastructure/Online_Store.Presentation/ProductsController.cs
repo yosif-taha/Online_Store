@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Online_Store.Presentation.Attributes;
 using Online_Store.Services.Abstractions;
 using Online_Store.Shared.Dtos;
@@ -17,6 +18,7 @@ namespace Online_Store.Presentation
     {
 
         [HttpGet] //Get: baseUrl/api/Products
+        [Authorize]
         public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParameters parameters)
         {
             var result = await _servicesManager.ProductService.GetAllProductAsync(parameters);

@@ -1,4 +1,6 @@
-﻿using Online_Store.Domain.Exeptions.NotFound;
+﻿using Online_Store.Domain.Exeptions.BadRequest;
+using Online_Store.Domain.Exeptions.NotFound;
+using Online_Store.Domain.Exeptions.UnAuthorized;
 using Online_Store.Shared.ErrorModels;
 
 namespace Online_Store.Web.Middlewares
@@ -35,6 +37,8 @@ namespace Online_Store.Web.Middlewares
                 context.Response.StatusCode = ex switch
                 {
                     NotFoundException => StatusCodes.Status404NotFound,
+                    BadRequestException => StatusCodes.Status400BadRequest,
+                    UnAuthorizedException => StatusCodes.Status401Unauthorized,
                     _ => StatusCodes.Status500InternalServerError
                 };
 

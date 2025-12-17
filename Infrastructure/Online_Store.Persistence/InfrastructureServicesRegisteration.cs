@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Online_Store.Domain.Contracts;
 using Online_Store.Persistence.Data.Contexts;
+using Online_Store.Persistence.Identity.Contexts;
 using Online_Store.Persistence.Repositories;
 using StackExchange.Redis;
 using System;
@@ -21,6 +22,12 @@ namespace Online_Store.Persistence
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
+
+            services.AddDbContext<IdentityStoreDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
+            });
+
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBasketReposatory, BasketRepository>();

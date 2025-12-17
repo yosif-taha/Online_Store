@@ -1,19 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Online_Store.Domain.Contracts;
+using Online_Store.Domain.Entites.Identity;
 using Online_Store.Domain.Entites.Products;
 using Online_Store.Persistence.Data.Contexts;
+using Online_Store.Persistence.Identity.Contexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Online_Store.Persistence
 {                              // Use primary ctor to ask clr create object
-    public class DbInitializer(OnlineStoreDbContext _context) : IDbInitializer
+    public class DbInitializer(
+        OnlineStoreDbContext _context,
+        IdentityStoreDbContext _identityContext,
+        UserManager<AppUser> _userManager,
+        RoleManager<IdentityRole> _roleManager)
+        : IDbInitializer
     {
-       
         public async Task IntiliazeAsync()
         {
             if (_context.Database.GetPendingMigrationsAsync().GetAwaiter().GetResult().Any()) // GetPendingMigrationsAsync():- this fun to get all migration not appling to database. Any():- return true or false. 
@@ -65,9 +73,9 @@ namespace Online_Store.Persistence
 
             if (!_context.Products.Any())
             {
-                // 1. Data Sedding for product brand
+                // 1. Data Sedding for product 
 
-                //1.1. read all data from json file 'brand.json'
+                //1.1. read all data from json file 'Products.json'
                 // C:\Users\ywsfw\source\repos\Online_Store\Infrastructure\Online_Store.Persistence\Data\Data Seeding\brands.json
                 var productdata = await File.ReadAllTextAsync(@"..\Infrastructure\Online_Store.Persistence\Data\Data Seeding\products.json"); // @ :- to delete use double // , 
 
@@ -82,6 +90,45 @@ namespace Online_Store.Persistence
             }
 
             await _context.SaveChangesAsync();
+        }
+        public async Task IntiliazeIdentityAsync()
+        {
+            if (_identityContext.Database.GetPendingMigrationsAsync().GetAwaiter().GetResult().Any()) // GetPendingMigrationsAsync():- this fun to get all migration not appling to database. Any():- return true or false. 
+            {
+                await _identityContext.Database.MigrateAsync();        //MigrateAsync() :- for appling migration in DB.
+            }
+
+            if(!_identityContext.Roles.Any())
+            {
+               await _roleManager.CreateAsync(new IdentityRole() { Name = "SuperAdmin"});
+               await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin"});
+            }
+
+            if(!_identityContext.Users.Any())
+            {
+                var superAdmin = new AppUser()
+                { 
+                  UserName = "SuperAdmin",
+                  DisplayName = "SuperAdmin",
+                  Email = "SuperAdmin@gmail.com",
+                  PhoneNumber = "01099999"
+                };
+
+                var admin = new AppUser()
+                { 
+                  UserName = "Admin",
+                  DisplayName = "Admin",
+                  Email = "Admin@gmail.com",
+                  PhoneNumber = "010777777"
+                };
+
+                await _userManager.CreateAsync(superAdmin, "superAdmin123");
+                await _userManager.CreateAsync(admin, "admin123");
+
+               await _userManager.AddToRoleAsync(superAdmin, "SuperAdmin");
+               await _userManager.AddToRoleAsync(admin, "Admin");
+            }
+
         }
     }
 }

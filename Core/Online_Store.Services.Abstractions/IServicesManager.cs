@@ -1,4 +1,5 @@
-﻿using Online_Store.Services.Abstractions.Baskets;
+﻿using Online_Store.Services.Abstractions.Auth;
+using Online_Store.Services.Abstractions.Baskets;
 using Online_Store.Services.Abstractions.Cache;
 using Online_Store.Services.Abstractions.Product;
 using System;
@@ -14,5 +15,6 @@ namespace Online_Store.Services.Abstractions
        IProductService ProductService { get; }
        IBasketServices BasketService { get; }
        ICacheService CacheService { get; }
+       IAuthService AuthServices { get; }
     }
 }

@@ -9,5 +9,6 @@ namespace Online_Store.Domain.Contracts
     public interface IDbInitializer
     {
          Task IntiliazeAsync();
+         Task IntiliazeIdentityAsync();
     }
 }

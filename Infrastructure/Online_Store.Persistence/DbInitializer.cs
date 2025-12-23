@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Online_Store.Domain.Contracts;
 using Online_Store.Domain.Entites.Identity;
+using Online_Store.Domain.Entites.Orders;
 using Online_Store.Domain.Entites.Products;
 using Online_Store.Persistence.Data.Contexts;
 using Online_Store.Persistence.Identity.Contexts;
@@ -79,13 +80,27 @@ namespace Online_Store.Persistence
                 // C:\Users\ywsfw\source\repos\Online_Store\Infrastructure\Online_Store.Persistence\Data\Data Seeding\brands.json
                 var productdata = await File.ReadAllTextAsync(@"..\Infrastructure\Online_Store.Persistence\Data\Data Seeding\products.json"); // @ :- to delete use double // , 
 
-                // 1.2. convert jsonstring to list<ProductPrand>
+                // 1.2. convert jsonstring to list<Product>
                 var products = JsonSerializer.Deserialize<List<Product>>(productdata); // this fun convert brandsdata to type from (List<ProductBrand)
 
                 //1.3.Add list to DB
                 if (products is not null && products.Count > 0)  // Chek to Deserialize succes and there is brands in this file
                 {
                     await _context.Products.AddRangeAsync(products); //if true added this in productbrands table 
+                }
+            }
+
+            if (!_context.DeliveryMethods.Any())
+            {
+                var deliveryMethodsdata = await File.ReadAllTextAsync(@"..\Infrastructure\Online_Store.Persistence\Data\Data Seeding\delivery.json"); // @ :- to delete use double // , 
+
+                // 1.2. convert jsonstring to list<Product>
+                var deleviryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryMethodsdata); // this fun convert brandsdata to type from (List<ProductBrand)
+
+                //1.3.Add list to DB
+                if (deleviryMethods is not null && deleviryMethods.Count > 0)  // Chek to Deserialize succes and there is brands in this file
+                {
+                    await _context.DeliveryMethods.AddRangeAsync(deleviryMethods); //if true added this in productbrands table 
                 }
             }
 

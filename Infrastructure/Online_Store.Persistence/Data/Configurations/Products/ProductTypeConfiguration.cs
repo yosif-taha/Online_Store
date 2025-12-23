@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Online_Store.Domain.Entites.Products;
 using System;
@@ -8,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Online_Store.Persistence.Data.Configurations
+namespace Online_Store.Persistence.Data.Configurations.Products
 {
-    public class ProductBrandConfiguration : IEntityTypeConfiguration<ProductBrand>
+    public class ProductTypeConfiguration : IEntityTypeConfiguration<ProductType>
     {
-        public void Configure(EntityTypeBuilder<ProductBrand> builder)
+        public void Configure(EntityTypeBuilder<ProductType> builder)
         {
             builder.Property(P => P.Name).HasColumnType("varchar").HasMaxLength(256);
         }

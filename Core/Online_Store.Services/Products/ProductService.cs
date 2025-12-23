@@ -2,7 +2,7 @@
 using Online_Store.Domain.Contracts;
 using Online_Store.Domain.Entites.Products;
 using Online_Store.Domain.Exeptions.NotFound;
-using Online_Store.Services.Abstractions.Product;
+using Online_Store.Services.Abstractions.Products;
 using Online_Store.Services.Specifications;
 using Online_Store.Services.Specifications.Products;
 using Online_Store.Shared;

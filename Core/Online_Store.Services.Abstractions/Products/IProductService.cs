@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Online_Store.Services.Abstractions.Product
+namespace Online_Store.Services.Abstractions.Products
 {
     public interface IProductService
     {

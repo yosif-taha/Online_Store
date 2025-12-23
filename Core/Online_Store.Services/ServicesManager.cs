@@ -8,10 +8,12 @@ using Online_Store.Services.Abstractions;
 using Online_Store.Services.Abstractions.Auth;
 using Online_Store.Services.Abstractions.Baskets;
 using Online_Store.Services.Abstractions.Cache;
-using Online_Store.Services.Abstractions.Product;
+using Online_Store.Services.Abstractions.Orders;
+using Online_Store.Services.Abstractions.Products;
 using Online_Store.Services.Auth;
 using Online_Store.Services.Baskets;
 using Online_Store.Services.Cache;
+using Online_Store.Services.Orders;
 using Online_Store.Services.Product;
 using Online_Store.Shared;
 using System;
@@ -36,5 +38,7 @@ namespace Online_Store.Services
         public ICacheService CacheService { get; } = new CachService(_cacheRepository);
 
         public IAuthService AuthServices { get; } = new AuthServices(_userManager, _options);
+
+        public IOrderService OrderServices { get; } = new OrderService(_unitOfWork,_mapper,_basketReposatory);
     }
 }

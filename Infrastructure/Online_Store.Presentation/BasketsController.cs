@@ -21,9 +21,9 @@ namespace Online_Store.Presentation
             return Ok(result);
         }
        [HttpPost]//Post : badeUrl/api/Baskets
-        public async Task<IActionResult> CreateOrUpdateBasket(CustomerBasketDto  dto)
+        public async Task<IActionResult> CreateOrUpdateBasket([FromBody] CustomerBasketDto  basket)
         {
-            var result = await _servicesManager.BasketService.CreateBasketAsync(dto ,TimeSpan.FromDays(1));
+            var result = await _servicesManager.BasketService.CreateBasketAsync(basket, TimeSpan.FromDays(1));
             return Ok(result);
         }
         [HttpDelete]//Delete : badeUrl/api/Basket

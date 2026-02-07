@@ -18,7 +18,7 @@ namespace Online_Store.Services.Baskets
         public async Task<CustomerBasketDto?> GetBasketAsync(string id)
         {
           var basket = await _basketReposatory.GetBasketAsync(id);
-            if (basket == null) throw new BasetNotFoungException(id);
+            if (basket == null) throw new BasketNotFoungException(id);
            var result = _mapper.Map<CustomerBasketDto>(basket);
             return result;
         }

@@ -2,6 +2,7 @@
 using Online_Store.Services.Abstractions.Baskets;
 using Online_Store.Services.Abstractions.Cache;
 using Online_Store.Services.Abstractions.Orders;
+using Online_Store.Services.Abstractions.Payment;
 using Online_Store.Services.Abstractions.Products;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,6 @@ namespace Online_Store.Services.Abstractions
        ICacheService CacheService { get; }
        IAuthService AuthServices { get; }
        IOrderService OrderServices { get; }
+       IPaymentService PaymentServices { get; }
     }
 }

@@ -9,7 +9,21 @@ namespace Online_Store.Services.Abstractions.Auth
 {
     public interface IAuthService
     {
-      public Task<UserResponse?> LoginAsync(LoginRequest request);
-      public Task<UserResponse?> RegiserAsync(RegisterRequest request);
+       Task<UserResponse?> LoginAsync(LoginRequest request);
+       Task<UserResponse?> RegiserAsync(RegisterRequest request);
+
+        //Check Email Exists
+        Task<bool> ChekEmailExistsAsync(string email);
+
+        //Get Current User
+        Task<UserResponse?> GetCurrentUserAsync(string email);
+
+        //Get Current User Address
+        Task<AddressDto?> GetCurrentUserAddressAsync(string email);
+
+        //Update Current User Adderess
+        Task<AddressDto?> UpdateCurrentUserAddressAsync(AddressDto request,string email);
+
+
     }
 }

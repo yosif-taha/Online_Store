@@ -32,7 +32,7 @@ namespace Online_Store.Presentation
             var result =  await _servicesManager.OrderServices.GetOrderForSpecificUserAsync(id, userEmail.Value);
             return Ok(result);
         }
-        [HttpGet("Orders")] //Get BaseUrl/api/Order/Orders
+        [HttpGet] //Get BaseUrl/api/Order/Orders
         public async Task<IActionResult> GetOrders()
         {
             var userEmail = User.FindFirst(ClaimTypes.Email);

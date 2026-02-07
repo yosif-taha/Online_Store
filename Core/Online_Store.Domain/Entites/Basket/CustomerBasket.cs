@@ -10,5 +10,9 @@ namespace Online_Store.Domain.Entites.Basket
     {
         public string Id { get; set; }
         public IEnumerable<BasketItems> Items { get; set; }
+        public int? DeliveryMethodId { get; set; }
+        public string? PaymentIntentId { get; set; }
+        public string? ClientSecret { get; set; }
+        public decimal? ShippingCost { get; set; }
     }
 }

@@ -1,148 +1,116 @@
-# \# Talabat
+# Talabat(ASP.NET Core 8)
+
+A production-style backend for a Talabat-like food delivery system. It showcases clean architecture, JWT auth + Google OAuth, Redis-backed caching, Stripe payments, SMTP email, and a specification-driven data access layer.
+
+## 🚀 Highlights
+
+- **.NET 8 Web API** with minimal `Program.cs`, feature-oriented controllers, and Swagger.
+- **Authentication & Identity**
+  - Email/password with **JWT** issuance.
+  - **Google OAuth** external login flow (`/api/Account/external-login`, callback supported).
+  - User management via **ASP.NET Core Identity** .
+- **Payments**: **Stripe** PaymentIntents + webhook to update order status.
+- **Caching**
+  - **Response caching** attribute (`[Cached(seconds)]`) backed by **Redis**.
+  - Custom cache key generation from URL + sorted query.
+- **Data & Patterns**
+  - **EF Core (SQL Server)** with migrations & **data seeding** (brands, categories, products, delivery methods).
+  - **Specification Pattern**, **Generic Repository**, **Unit of Work**.
+  - **AutoMapper** DTO mapping + URL resolvers for images.
+- **Reliability**
+  - Central **ExceptionMiddleware** with consistent API error shapes.
+  - Validation responses via `ApiValidationErrorResponse`.
+- **Emails**: SMTP service for password reset / notifications.
+
+---
+
+## 🧱 Solution Structure
+
+```text
+Online_Store/
+ ├─ Online_Store.Presentation/   # API layer (controllers, DTOs, middleware, Swagger)
+ │  ├─ Controllers/
+ │  │   ├─ AuthController.cs   # Register, Login, External Login, Current User, Address, Forgot/Reset Password
+ │  │   ├─ ProductsController.cs  # Products, Brands, Categories (+ [Cached])
+ │  │   ├─ BasketsController.cs    # Basket CRUD (Redis)
+ │  │   ├─ OrdersController.cs    # Create/Get orders, delivery methods (JWT [Authorize])
+ │  │   └─ PaymentsController.cs   # Stripe PaymentIntent + webhook
+ │  ├─ Dtos/
+ │  ├─ Extensions/    # Add*Services, Swagger, UserManager helpers
+ │  ├─ Helpers/       # MappingProfile, CachedAttribute, Url resolvers
+ │  ├─ Middlewares/   # ExceptionMiddleware
+ │  └─ wwwroot/images/products/   # Static product images
+ │
+ ├─ Online_Store.Core/     # Domain & contracts
+ │  ├─ Entities/
+ │  │   ├─ Product (Brand/Category/Product)
+ │  │   ├─ Basket (CustomerBasket, BasketItem)
+ │  │   ├─ Order_Aggregate (Order, OrderItem, DeliveryMethod, Address, OrderStatus)
+ │  │   └─ Identity (ApplicationUser, Address)
+ │  ├─ Specifications/     # Base + Product & Order specs, params & pagination
+ │  └─ Services.Contract/  # IProductService, IOrderService, IPaymentService, IAuthService, IResponseCacheService, ISendEmail, etc.
+ │
+ |  ├─ Repository/    # Infrastructure: EF Core, Migrations, Seeding
+ │  ├─ _Data/              # StoreContext, configurations, seeding (brands/categories/products/delivery)
+ │  ├─ _Identity/          # Identity DbContext + user seed
+ │  ├─ Generic Repository/ # GenericRepository, SpecificationsEvaluator
+ │  ├─ Basket Repository/  # IBasketRepository → Redis
+ │  └─ UnitOfWork.cs
+ │
+ └─  Service/              # Application services
+    ├─ Product Service/    # Filtering, sorting, paging via specifications
+    ├─ Order Service/      # Create order from basket, delivery, totals
+    ├─ Payment Service/    # Stripe PaymentIntent, webhook status updates
+    ├─ AuthService/        # JWT token factory
+    └─ Cache Service/      # Redis-backed response cache
+
+```
+---
+
+## 🗝️ Key Endpoints (examples)
+
+- **Auth / Account**
+  - `POST /api/Auth/register`
+  - `POST /api/Auth/login`
+  - `GET  /api/Auth/currentUser` (JWT)
+  - `GET  /api/Auth/EmailExists` 
+  - `GET/PUT /api/Account/address` (JWT)
+- **Products**
+  - `GET /api/Products` — supports `pageIndex`, `pageSize`, `sort`, `brandId`, `categoryId`, `search`
+  - `GET /api/Products/brands`  (cached)
+  - `GET /api/Products/Types` (cached)
+  - `GET /api/Products/{id}`
+- **Basket (Redis)**
+  - `GET /api/Basket?id={basketId}`
+  - `POST /api/Basket` (create/update)
+  - `DELETE /api/Basket?id={basketId}`
+- **Orders (JWT)**
+  - `POST /api/Orders` — create order from basket + delivery method + shipping address
+  - `GET  /api/Orders`
+  - `GET  /api/Orders/{id}`
+  - `GET  /api/Orders/deliveryMethods`
+- **Payments (Stripe)**
+  - `POST /api/Payment/{basketId}` — create/update PaymentIntent
+  - `POST /api/Payment/webhook` — handle Stripe events
+
+---
+
+## 🧪 Tech Stack
+
+- **ASP.NET Core 8**, **EF Core (SQL Server)**, **Identity**
+- **JWT** + **Google OAuth**
+- **Stripe** SDK
+- **Redis** (StackExchange.Redis)
+- **AutoMapper**
+- **Swagger (Swashbuckle)**
 
 
+---
 
-# A full-stack \*\*online food ordering platform\*\* built with \*\*Angular 16\*\* (Frontend) and \*\*ASP.NET Core Web API\*\* (Backend), using \*\*SQL Server\*\* database and integrated with \*\*Stripe Payment Gateway\*\*.  
+## 👨‍💻 Author
 
-# 
-
-# The project is designed using \*\*Onion Architecture\*\*, \*\*Dependency Injection\*\*, and clean code practices to ensure maintainability, scalability, and readability for any developer.
-
-# 
-
-# ---
-
-# 
-
-# \## Features
-
-# 
-
-# \### Product Module
-
-# \- Browse all products with \*\*filtering, sorting, and pagination\*\*
-
-# \- View details of a single product
-
-# \- Add new products to the database and update existing ones
-
-# 
-
-# \### Order Module
-
-# \- Retrieve all orders for a specific user
-
-# \- Retrieve a single order
-
-# \- View available delivery methods with pricing
-
-# 
-
-# \### Basket Module
-
-# \- Temporary in-memory storage for the shopping cart
-
-# \- Add/remove products and adjust quantities
-
-# \- Checkout process integrated with payment
-
-# 
-
-# \### Checkout \& Payment
-
-# \- Step 1: Select delivery address
-
-# \- Step 2: Choose delivery method and cost
-
-# \- Step 3: Payment via \*\*Stripe\*\* without leaving the site
-
-# \- Payment result page for success/failure feedback
-
-# 
-
-# \### Security Module
-
-# \- User authentication: Register / Login
-
-# \- Protected routes to ensure only authenticated users can checkout
-
-# 
-
-# \### Error Handling
-
-# \- Centralized error handling using custom middleware
-
-# \- Clear and consistent API responses for unexpected errors
-
-# 
-
-# ---
-
-# 
-
-# \## Architecture \& Design Patterns
-
-# \- \*\*Onion Architecture\*\* for separation of concerns
-
-# \- \*\*Repository Pattern\*\* for data access
-
-# \- \*\*Service Layer\*\* for business logic
-
-# \- \*\*Specification Pattern\*\* for flexible queries
-
-# \- \*\*Dependency Injection\*\* for modularity and testability
-
-# \- Clean code principles to ensure readability and maintainability
-
-# 
-
-# ---
-
-# 
-
-# \## Tech Stack
-
-# 
-
-# \*\*Frontend:\*\*  
-
-# \- Angular 16, TypeScript, SCSS
-
-# 
-
-# \*\*Backend:\*\*  
-
-# \- ASP.NET Core Web API  
-
-# \- Entity Framework Core  
-
-# \- SQL Server  
-
-# \- Libraries: AutoMapper, JWT Bearer, Stripe.net, StackExchange.Redis
-
-# 
-
-# \*\*Other:\*\*  
-
-# \- Payment Integration: Stripe  
-
-# \- In-memory basket storage for efficiency  
-
-# 
-
-# ---
-
-# 
-
-# \## Setup \& Installation
-
-# 
-
-# 1\. Clone the repository:
-
-# ```bash
-
-# git clone https://github.com/YOUR\_USERNAME/Talabat.git
-
-# 
-
+**Youssef Taha**  
+- 📧 Email: yousif.t.abdulwahab@gmail.com 
+- 🔗 [LinkedIn](https://www.linkedin.com/in/yousif-taha-89454922b/)  
+- 🔗 [GitHub](https://github.com/yosif-taha)  
+---

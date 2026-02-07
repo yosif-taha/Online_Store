@@ -10,10 +10,13 @@ namespace Online_Store.Shared.Dtos.Baskets
     public class CustomerBasketDto
     {
         [JsonPropertyName("id")]
-
         public string Id { get; set; }
-        [JsonPropertyName("items")]
 
+        [JsonPropertyName("items")]
         public IEnumerable<BasketItemsDto> Items { get; set; }
+        public int? DeliveryMethodId { get; set; }
+        public string? PaymentIntentId { get; set; }
+        public string? ClientSecret { get; set; }
+        public decimal? ShippingCost { get; set; }
     }
 }

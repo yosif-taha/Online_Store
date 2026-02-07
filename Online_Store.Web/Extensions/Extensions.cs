@@ -7,6 +7,7 @@ using Online_Store.Domain.Contracts;
 using Online_Store.Domain.Entites.Identity;
 using Online_Store.Persistence;
 using Online_Store.Persistence.Identity.Contexts;
+using Online_Store.Presentation;
 using Online_Store.Services;
 using Online_Store.Shared;
 using Online_Store.Shared.ErrorModels;
@@ -29,6 +30,14 @@ namespace Online_Store.Web.Exctensions
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
             services.AddAuthonticationService(configuration);
 
+            services.AddCors(Options =>
+            {
+                Options.AddPolicy("AllowAll",Policy =>
+                {
+                    Policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+             
+                });
+            });
 
 
             return services;
@@ -36,7 +45,9 @@ namespace Online_Store.Web.Exctensions
 
         private static IServiceCollection AddWebServices(this IServiceCollection services)
         {
-            services.AddControllers();
+            //services.AddControllers();
+            services.AddControllers()
+             .AddApplicationPart(typeof(ProductsController).Assembly);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -120,6 +131,7 @@ namespace Online_Store.Web.Exctensions
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
 

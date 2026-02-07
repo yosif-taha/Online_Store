@@ -11,7 +11,7 @@ namespace Online_Store.Shared.Dtos.Orders
         public int ProductId { get; set; }
         public string productName { get; set; }
         public string PictrulUrl { get; set; }
-        public decimal price { get; set; }
+        public decimal Cost { get; set; }
         public int Quantety { get; set; }
     }
 }

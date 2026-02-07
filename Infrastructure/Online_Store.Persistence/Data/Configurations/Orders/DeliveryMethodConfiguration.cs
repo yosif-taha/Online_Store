@@ -13,7 +13,7 @@ namespace Online_Store.Persistence.Data.Configurations.Orders
     {
         public void Configure(EntityTypeBuilder<DeliveryMethod> builder)
         {
-            builder.Property(D => D.Price).HasColumnType("decimal(18,2)");
+            builder.Property(D => D.Cost).HasColumnType("decimal(18,2)");
 
             builder.Property(D => D.ShortName).HasColumnType("varchar").HasMaxLength(128);
             builder.Property(D => D.Description).HasColumnType("varchar").HasMaxLength(256);

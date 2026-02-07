@@ -12,7 +12,7 @@ namespace Online_Store.Shared.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         public string PictureUrl { get; set; }
-        public decimal Price { get; set; }
+        public decimal Cost { get; set; }
         public string Brand { get; set; }
         public string Type { get; set; }
     }

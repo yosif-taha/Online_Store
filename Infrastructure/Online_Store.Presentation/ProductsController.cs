@@ -17,8 +17,7 @@ namespace Online_Store.Presentation
     public class ProductsController(IServicesManager _servicesManager) : ControllerBase
     {
 
-        [HttpGet] //Get: baseUrl/api/Products
-        [Authorize]
+        [HttpGet] //Get: baseUrl/api/Products 
         public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParameters parameters)
         {
             var result = await _servicesManager.ProductService.GetAllProductAsync(parameters);

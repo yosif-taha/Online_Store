@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Online_Store.Services.Product
+namespace Online_Store.Services.Products
 {
     public class ProductService(IUnitOfWork _unitOfWork , IMapper _mapper) : IProductService
     {

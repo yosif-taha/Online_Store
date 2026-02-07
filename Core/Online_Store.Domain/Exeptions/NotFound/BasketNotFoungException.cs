@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Online_Store.Domain.Exeptions.NotFound
 {
-    public class BasetNotFoungException(string id) : NotFoundException($"Basket with id: {id} is not found")
+    public class BasketNotFoungException(string id) : NotFoundException($"Basket with id: {id} is not found")
     {
     }
 }

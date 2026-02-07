@@ -29,14 +29,14 @@ namespace Online_Store.Services.Orders
             // 3. Basket Items to Order Items
 
             var basketItem = await _basketReposatory.GetBasketAsync(request.BasketId);
-            if (basketItem == null) throw new BasetNotFoungException(request.BasketId);
+            if (basketItem == null) throw new BasketNotFoungException(request.BasketId);
 
             var items = new List<OrderItem>();
             foreach (var item in basketItem.Items)
             {
                 //check Price
                 //get product from Db
-               var product = await _unitOfWork.GetRepository<int, Online_Store.Domain.Entites.Products.Product>().GetAsync(item.Id);
+               var product = await _unitOfWork.GetRepository<int, Product>().GetAsync(item.Id);
                if(product ==null) throw new ProductNotFoundException(item.Id);
 
                if(product.Price != item.Price) item.Price = product.Price;
@@ -50,9 +50,15 @@ namespace Online_Store.Services.Orders
             // 4. Calculate Subtotal
             decimal subtotal = items.Sum(I => I.Price * I.Quentity);
 
+            //Check if order with same PaymentIntentId exist
+            var spec = new OrderWithPaymentIntentSpecification(basketItem.PaymentIntentId);
+            var existsOrder = await _unitOfWork.GetRepository<Guid, Order>().GetAsync(spec);
+                
+            if(existsOrder != null) 
+                 _unitOfWork.GetRepository<Guid, Order>().Delete(existsOrder);
 
             // 5. Create Order
-            var order = new Order(userEmail,address,delivery, items, subtotal);
+            var order = new Order(userEmail,address,delivery, items, subtotal, basketItem.PaymentIntentId);
 
               await _unitOfWork.GetRepository<Guid,Order>().AddAsync(order);
             var count = await _unitOfWork.SaveChangeAsync();

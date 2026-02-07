@@ -9,12 +9,14 @@ using Online_Store.Services.Abstractions.Auth;
 using Online_Store.Services.Abstractions.Baskets;
 using Online_Store.Services.Abstractions.Cache;
 using Online_Store.Services.Abstractions.Orders;
+using Online_Store.Services.Abstractions.Payment;
 using Online_Store.Services.Abstractions.Products;
 using Online_Store.Services.Auth;
 using Online_Store.Services.Baskets;
 using Online_Store.Services.Cache;
 using Online_Store.Services.Orders;
-using Online_Store.Services.Product;
+using Online_Store.Services.Payments;
+using Online_Store.Services.Products;
 using Online_Store.Shared;
 using System;
 using System.Collections.Generic;
@@ -29,7 +31,8 @@ namespace Online_Store.Services
         IBasketReposatory _basketReposatory,
         ICacheRepository _cacheRepository,
         UserManager<AppUser> _userManager,
-        IOptions<JwtOptions> _options) :
+        IOptions<JwtOptions> _options,
+        IConfiguration _configuration ) :
         IServicesManager
     {
         public IProductService ProductService { get; } = new ProductService(_unitOfWork, _mapper);
@@ -37,8 +40,10 @@ namespace Online_Store.Services
 
         public ICacheService CacheService { get; } = new CachService(_cacheRepository);
 
-        public IAuthService AuthServices { get; } = new AuthServices(_userManager, _options);
+        public IAuthService AuthServices { get; } = new AuthServices(_userManager, _options,_mapper);
 
         public IOrderService OrderServices { get; } = new OrderService(_unitOfWork,_mapper,_basketReposatory);
+
+        public IPaymentService PaymentServices { get; } = new PaymentService(_basketReposatory,_unitOfWork,_configuration,_mapper);
     }
 }

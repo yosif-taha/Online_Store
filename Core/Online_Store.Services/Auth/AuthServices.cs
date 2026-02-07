@@ -16,11 +16,45 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Online_Store.Shared;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Online_Store.Services.Auth
 {
-    public class AuthServices(UserManager<AppUser> _userManager, IOptions<JwtOptions> _options) : IAuthService
+    public class AuthServices(UserManager<AppUser> _userManager, IOptions<JwtOptions> _options, IMapper _mapper) : IAuthService
     {
+        public async Task<bool> ChekEmailExistsAsync(string email)
+        {
+           return await _userManager.FindByEmailAsync(email) !=null;   
+            
+        }
+        public async Task<UserResponse?> GetCurrentUserAsync(string email)
+        {
+          var user = await  _userManager.FindByEmailAsync(email);
+            if (user == null) throw new UserNotFoundException(email);
+            return new UserResponse()
+            {
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                Token = await GenerateTokenAsync(user)     
+            };
+        }
+        public async Task<AddressDto?> GetCurrentUserAddressAsync(string email)
+        {
+            var user = _userManager.Users.Include(u => u.Address).FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+            if (user == null) throw new UserNotFoundException(email);
+            var address = _mapper.Map<AddressDto>(user.Address);
+            return address;
+        }
+        public async Task<AddressDto?> UpdateCurrentUserAddressAsync(AddressDto request, string email)
+        {
+            var user = _userManager.Users.Include(u => u.Address).FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+            if (user == null) throw new UserNotFoundException(email);
+            user.Address = _mapper.Map<Address>(request);
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded ? _mapper.Map<AddressDto>(user.Address) : null;
+        }
+
         public async Task<UserResponse?> LoginAsync(LoginRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
@@ -51,7 +85,7 @@ namespace Online_Store.Services.Auth
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded) throw new RegesterBadRequestException(result.Errors.Select(e => e.Description).ToList());
 
-             return new UserResponse()
+            return new UserResponse()
             {
                 DisplayName = user.DisplayName,
                 Email = user.Email,
@@ -66,8 +100,8 @@ namespace Online_Store.Services.Auth
             var authClaims = new List<Claim>()
             {
               new Claim(ClaimTypes.GivenName,user.DisplayName) ,
-              new Claim(ClaimTypes.Email,user.Email) ,
-              new Claim(ClaimTypes.MobilePhone,user.PhoneNumber) ,
+              new Claim(ClaimTypes.Email,user.Email) 
+              //new Claim(ClaimTypes.MobilePhone,user.PhoneNumber) ,
 
             };
 
@@ -83,14 +117,14 @@ namespace Online_Store.Services.Auth
 
             var token = new JwtSecurityToken(
                 issuer: option.issuer,
-                audience:option.auduance,
+                audience: option.auduance,
                 claims: authClaims,
                 expires: DateTime.UtcNow.AddDays(option.durationindays),
                 signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
                 );
-        
-           return new JwtSecurityTokenHandler().WriteToken(token);
-        
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+
         }
     }
 }

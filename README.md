@@ -1,14 +1,6 @@
 # \# Talabat
 
-# 
 
-# \[!\[GitHub last commit](https://img.shields.io/github/last-commit/YOUR\_USERNAME/Talabat)](https://github.com/YOUR\_USERNAME/Talabat)
-
-# \[!\[GitHub issues](https://img.shields.io/github/issues/YOUR\_USERNAME/Talabat)](https://github.com/YOUR\_USERNAME/Talabat/issues)
-
-# \[!\[GitHub license](https://img.shields.io/github/license/YOUR\_USERNAME/Talabat)](LICENSE)
-
-# 
 
 # A full-stack \*\*online food ordering platform\*\* built with \*\*Angular 16\*\* (Frontend) and \*\*ASP.NET Core Web API\*\* (Backend), using \*\*SQL Server\*\* database and integrated with \*\*Stripe Payment Gateway\*\*.  
 

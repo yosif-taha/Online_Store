@@ -137,8 +137,8 @@ namespace Online_Store.Persistence
                   PhoneNumber = "010777777"
                 };
 
-                await _userManager.CreateAsync(superAdmin, "superAdmin123");
-                await _userManager.CreateAsync(admin, "admin123");
+                await _userManager.CreateAsync(superAdmin, "P@ssword123");
+                await _userManager.CreateAsync(admin, "P@ssword123");
 
                await _userManager.AddToRoleAsync(superAdmin, "SuperAdmin");
                await _userManager.AddToRoleAsync(admin, "Admin");

@@ -12,8 +12,8 @@ using Online_Store.Persistence.Identity.Contexts;
 namespace Online_Store.Persistence.Identity.Migrations
 {
     [DbContext(typeof(IdentityStoreDbContext))]
-    [Migration("20251216165234_AddIdentityTables")]
-    partial class AddIdentityTables
+    [Migration("20260401111756_IdentityTables")]
+    partial class IdentityTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

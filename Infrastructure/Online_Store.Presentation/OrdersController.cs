@@ -15,7 +15,7 @@ namespace Online_Store.Presentation
     [Route("api/[controller]")]
     public class OrdersController(IServicesManager _servicesManager) : ControllerBase
     {
-        [HttpPost] //Post baseUrl/api/Order
+        [HttpPost] //Post baseUrl/api/Orders
         [Authorize]
         public async Task<IActionResult> CreateOrder(OrderRequest orderRequest)
         {
@@ -24,7 +24,7 @@ namespace Online_Store.Presentation
           return Ok(result);
         }
 
-        [HttpGet("{id}")] //Get BaseUrl/api/Order/{id}
+        [HttpGet("{id}")] //Get BaseUrl/api/Orders/{id}
         public async Task<IActionResult> GetOrderById(Guid id)
         {
             var userEmail = User.FindFirst(ClaimTypes.Email);
@@ -32,7 +32,7 @@ namespace Online_Store.Presentation
             var result =  await _servicesManager.OrderServices.GetOrderForSpecificUserAsync(id, userEmail.Value);
             return Ok(result);
         }
-        [HttpGet] //Get BaseUrl/api/Order/Orders
+        [HttpGet] //Get BaseUrl/api/Orders
         public async Task<IActionResult> GetOrders()
         {
             var userEmail = User.FindFirst(ClaimTypes.Email);
@@ -41,6 +41,7 @@ namespace Online_Store.Presentation
             return Ok(result);
         }
         [HttpGet("DeliveryMethods")] //Get BaseUrl/api/Order/DeliveryMethods
+       // [Authorize]
         public async Task<IActionResult> GetDeliveryMethod()
         {
           var result =  await _servicesManager.OrderServices.GetDeliveryMethodsAsync();

@@ -26,7 +26,7 @@ namespace Online_Store.Presentation
             var result = await _servicesManager.BasketService.CreateBasketAsync(basket, TimeSpan.FromDays(1));
             return Ok(result);
         }
-        [HttpDelete]//Delete : badeUrl/api/Basket
+        [HttpDelete]//Delete : badeUrl/api/Baskets?id
         public async Task<IActionResult> DeleteBasket(string id)
         {
             var result = await _servicesManager.BasketService.DeleteBasketAsync(id);

@@ -27,6 +27,7 @@ namespace Online_Store.Presentation
 
 
         [HttpGet("{id}")]  //Get: baseUrl/api/Products/5
+        //[Authorize]
         public async Task<IActionResult> GetProductsById(int? id)
         {
             var result = await _servicesManager.ProductService.GetProductByIdAsync(id.Value);
